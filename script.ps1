@@ -7,9 +7,7 @@ Start-Sleep -Seconds 2
 $shell = New-Object -ComObject WScript.Shell
 $shell.SendKeys("{F11}")
 
-# Appuyer sur Espace (pour lancer la vidéo par exemple)
-Start-Sleep -Seconds 1
-$shell.SendKeys(" ")
+# Appuyer sur Espace (pour lancer la vidéo par exemple
 
 Start-Sleep -Seconds 1
 $shell.SendKeys("f")
